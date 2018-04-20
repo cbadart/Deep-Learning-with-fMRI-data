@@ -82,7 +82,7 @@ def main():
 	
 	# load fMRI data from the matlab files
 
-	data  = load_data()
+	data = load_data()
 	pprint.pformat(data)
 	train = data[0:89]
 	print("train shape: {}".format(train.shape))
@@ -91,14 +91,21 @@ def main():
 			
 	#model.fit(x_train, y_train, epochs=5, batch_size=32)
 	subj_num = 0
+
 	for subj in train:
+		model.fit(subj, keras.utils.to_categorical(labels))
 		print("Training subject {}".format(subj_num))
-		model.train_on_batch(subj, keras.utils.to_categorical(labels))
 		subj_num = subj_num + 1
+
 	#ten_fold_xv(data)
 	# evaluate performance
-	loss_and_metrics = model.evaluate(test, labels, batch_size=128)
-	print(loss_and_metrics)
+	results = []
+	for test_subj in test:
+		results.append(model.evaluate(test_subj, keras.utils.to_categorical(labels)))#, batch_size=128))
+
+	pprint.pprint(results)
+
+	return
 
 	# generate predictions on new data
 	#classes = model.predict(x_test, batch_size=128)
