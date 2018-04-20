@@ -61,8 +61,7 @@ def main():
 	# add layers
 	# input layer: data is 1940 x 116 so input layer should have 116 nodes
 
-	model.add(Dense(units=116, activation='relu', input_shape=(1940,116,)))
-	model.add(Flatten())
+	model.add(Dense(units=116, activation='relu', input_dim=116))
 	# hidden layer: ~2/3(n_in) + n_out = 84
 	model.add(Dense(units=84, activation='relu'))
 
@@ -91,7 +90,11 @@ def main():
 	print("test shape: {}".format(test.shape))
 			
 	#model.fit(x_train, y_train, epochs=5, batch_size=32)
-	model.train_on_batch(train, keras.utils.to_categorical(labels))
+	subj_num = 0
+	for subj in train:
+		print("Training subject {}".format(subj_num))
+		model.train_on_batch(subj, keras.utils.to_categorical(labels))
+		subj_num = subj_num + 1
 	#ten_fold_xv(data)
 	# evaluate performance
 	loss_and_metrics = model.evaluate(test, labels, batch_size=128)
