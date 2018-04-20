@@ -1,10 +1,11 @@
 import keras
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Flatten
 from scipy.io import loadmat
 import keras
 import numpy as np
 import os, glob
+import pprint
 
 def load_data():
 	data = np.zeros(shape=(100, 1940, 116))
@@ -17,7 +18,7 @@ def load_data():
 			mat = loadmat(file_path)
 			data[i] = mat['data']
 			i = i + 1
-	#print(data.shape)
+	print(data.shape)
 	return data
 
 def ten_fold_xv(data):
@@ -59,9 +60,12 @@ def main():
 
 	# add layers
 	# input layer: data is 1940 x 116 so input layer should have 116 nodes
-	model.add(Dense(units=116, activation='relu', input_shape=(1940, 116)))
+
+	model.add(Dense(units=116, activation='relu', input_shape=(1940,116,)))
+	model.add(Flatten())
 	# hidden layer: ~2/3(n_in) + n_out = 84
 	model.add(Dense(units=84, activation='relu'))
+
 	# output layer: one node per class label when using softmax, 7 classes so 7 nodes
 	model.add(Dense(units=8, activation='softmax'))
 
@@ -78,8 +82,9 @@ def main():
 	model.summary()
 	
 	# load fMRI data from the matlab files
-	data = load_data()
-	
+
+	data  = load_data()
+	pprint.pformat(data)
 	train = data[0:89]
 	print("train shape: {}".format(train.shape))
 	test = data[90:99]
