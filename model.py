@@ -15,11 +15,12 @@ def load_data():
 			mat = loadmat(file_path)
 			data[i] = mat['data']
 			i = i + 1
-	print(data.shape)
+	#print(data.shape)
 	return data
 
 def ten_fold_xv(data):
 	# does 10-fold cross validation
+	results = dict()
 	for i in range(10):
 		test = np.zeros(shape=(10, 1940, 116))
 		train = np.zeros(shape=(90, 1940, 116))
@@ -35,6 +36,21 @@ def ten_fold_xv(data):
 				train[train_i] = data[d]
 				train_i = train_i + 1
 		
+		# train model
+		
+		# evaluate performance
+		#loss_and_metrics = model.evaluate(x_test, y_test, batch_size=128)
+		#results[i] = loss_and_metrics["accuracy"] #??? maybe ???
+		
+	# calculate overall accuracy
+	print("----- RESULTS -----")
+	total = 0
+	for instance in results:
+		total = total + results[instance]
+		print("{}: {}".format(instance, results[instance]))
+	avg = total / 10.0
+	print("\nOverall: {}".format(avg))
+	
 def main():
 	# initialize model
 	model = Sequential()
@@ -66,8 +82,8 @@ def main():
 	print(train1subj.shape)
 			
 	#model.fit(x_train, y_train, epochs=5, batch_size=32)
-	#model.train_on_batch(train1subj, labels)
-	ten_fold_xv(data)
+	model.train_on_batch(train1subj, labels)
+	#ten_fold_xv(data)
 	# evaluate performance
 	#loss_and_metrics = model.evaluate(x_test, y_test, batch_size=128)
 
