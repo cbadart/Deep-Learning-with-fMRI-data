@@ -2,6 +2,7 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from scipy.io import loadmat
+import keras
 import numpy as np
 import os, glob
 
@@ -62,7 +63,7 @@ def main():
 	# hidden layer: ~2/3(n_in) + n_out = 84
 	model.add(Dense(units=84, activation='relu'))
 	# output layer: one node per class label when using softmax, 7 classes so 7 nodes
-	model.add(Dense(units=7, activation='softmax'))
+	model.add(Dense(units=8, activation='softmax'))
 
 	# read matlab label file
 	mat_labels = loadmat('labels.mat', squeeze_me=True, struct_as_record=False)
@@ -90,7 +91,7 @@ def main():
 	# evaluate performance
 	loss_and_metrics = model.evaluate(test, labels, batch_size=128)
 	print(loss_and_metrics)
-	
+
 	# generate predictions on new data
 	#classes = model.predict(x_test, batch_size=128)
 
