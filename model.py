@@ -1,3 +1,4 @@
+import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from scipy.io import loadmat
@@ -57,7 +58,7 @@ def main():
 
 	# add layers
 	# input layer: data is 1940 x 116 so input layer should have 116 nodes
-	model.add(Dense(units=116, activation='relu', input_dim=116))
+	model.add(Dense(units=116, activation='relu', input_shape=(1940, 116)))
 	# hidden layer: ~2/3(n_in) + n_out = 84
 	model.add(Dense(units=84, activation='relu'))
 	# output layer: one node per class label when using softmax, 7 classes so 7 nodes
@@ -78,15 +79,18 @@ def main():
 	# load fMRI data from the matlab files
 	data = load_data()
 	
-	train1subj = data[0]
-	print(train1subj.shape)
+	train = data[0:89]
+	print("train shape: {}".format(train.shape))
+	test = data[90:99]
+	print("test shape: {}".format(test.shape))
 			
 	#model.fit(x_train, y_train, epochs=5, batch_size=32)
-	model.train_on_batch(train1subj, labels)
+	model.train_on_batch(train, keras.utils.to_categorical(labels))
 	#ten_fold_xv(data)
 	# evaluate performance
-	#loss_and_metrics = model.evaluate(x_test, y_test, batch_size=128)
-
+	loss_and_metrics = model.evaluate(test, labels, batch_size=128)
+	print(loss_and_metrics)
+	
 	# generate predictions on new data
 	#classes = model.predict(x_test, batch_size=128)
 
